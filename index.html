@@ -3,6 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <title>Simple Test</title>
+
+  <style>
+    #plane {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border: 2px solid black;
+      margin-top: 20px;
+    }
+
+    .axis-label {
+      position: absolute;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    #label-old { top: -20px; left: 130px; }
+    #label-young { bottom: -20px; left: 120px; }
+    #label-unhappy { left: -55px; top: 140px; }
+    #label-happy { right: -45px; top: 140px; }
+
+    #dot {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: red;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
@@ -23,32 +54,47 @@
 
 <p id="result"></p>
 
+<div id="plane">
+  <div id="label-old" class="axis-label">OLD</div>
+  <div id="label-young" class="axis-label">YOUNG</div>
+  <div id="label-unhappy" class="axis-label">UNHAPPY</div>
+  <div id="label-happy" class="axis-label">HAPPY</div>
+
+  <div id="dot"></div>
+</div>
+
 <script>
 function showResult() {
   const happy = document.querySelector('input[name="happy"]:checked')?.value;
   const old = document.querySelector('input[name="old"]:checked')?.value;
 
   if (!happy || !old) {
-    document.getElementById("result").textContent = "Please answer both questions.";
+    document.getElementById("result").textContent =
+      "Please answer both questions.";
     return;
   }
 
   let text = "";
 
-  if (happy === "yes" && old === "yes") {
-    text = "You are a happy old person.";
-  }
-  if (happy === "yes" && old === "no") {
-    text = "You are a happy young person.";
-  }
-  if (happy === "no" && old === "yes") {
-    text = "You are an unhappy old person.";
-  }
-  if (happy === "no" && old === "no") {
-    text = "You are an unhappy young person.";
-  }
+  if (happy === "yes" && old === "yes") text = "You are a happy old person.";
+  if (happy === "yes" && old === "no") text = "You are a happy young person.";
+  if (happy === "no" && old === "yes") text = "You are an unhappy old person.";
+  if (happy === "no" && old === "no") text = "You are an unhappy young person.";
 
   document.getElementById("result").textContent = text;
+
+  // --- PLANE LOGIC ---
+  const dot = document.getElementById("dot");
+
+  // X axis
+  const x = happy === "yes" ? 225 : 75;
+
+  // Y axis
+  const y = old === "yes" ? 75 : 225;
+
+  dot.style.left = x + "px";
+  dot.style.top = y + "px";
+  dot.style.display = "block";
 }
 </script>
 
