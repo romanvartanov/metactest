@@ -1,99 +1,132 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Simple Test</title>
+<meta charset="UTF-8">
+<title>Metacentrism Test</title>
 
-  <style>
-    #plane {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      border: 2px solid black;
-      margin-top: 20px;
-    }
-
-    .axis-label {
-      position: absolute;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    #label-old { top: -20px; left: 130px; }
-    #label-young { bottom: -20px; left: 120px; }
-    #label-unhappy { left: -55px; top: 140px; }
-    #label-happy { right: -45px; top: 140px; }
-
-    #dot {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      background: red;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
-    }
-  </style>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
+  h2 { margin-top: 40px; }
+  .question { margin-bottom: 20px; }
+  .plane {
+    position: relative;
+    width: 400px;
+    height: 400px;
+    border: 2px solid black;
+    margin-top: 40px;
+  }
+  .axis-label {
+    position: absolute;
+    font-weight: bold;
+  }
+  .dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
 </head>
+
 <body>
 
-<h1>Very Simple Test</h1>
+<h1>Metacentrism Orientation Test</h1>
 
-<form id="testForm">
-  <p>Are you happy?</p>
-  <label><input type="radio" name="happy" value="yes"> Yes</label>
-  <label><input type="radio" name="happy" value="no"> No</label>
+<form id="testForm"></form>
 
-  <p>Are you old?</p>
-  <label><input type="radio" name="old" value="yes"> Yes</label>
-  <label><input type="radio" name="old" value="no"> No</label>
+<button onclick="calculate()">See result</button>
 
-  <br><br>
-  <button type="button" onclick="showResult()">See result</button>
-</form>
+<h2>Result</h2>
+<p id="score"></p>
 
-<p id="result"></p>
-
-<div id="plane">
-  <div id="label-old" class="axis-label">OLD</div>
-  <div id="label-young" class="axis-label">YOUNG</div>
-  <div id="label-unhappy" class="axis-label">UNHAPPY</div>
-  <div id="label-happy" class="axis-label">HAPPY</div>
-
-  <div id="dot"></div>
+<div class="plane">
+  <div class="axis-label" style="top:-25px; left:150px;">Ego-centrism</div>
+  <div class="axis-label" style="bottom:-30px; left:135px;">Depersonalization</div>
+  <div class="axis-label" style="left:-90px; top:185px;">Material</div>
+  <div class="axis-label" style="right:-70px; top:185px;">Ideal</div>
+  <div id="dot" class="dot" style="display:none;"></div>
 </div>
 
 <script>
-function showResult() {
-  const happy = document.querySelector('input[name="happy"]:checked')?.value;
-  const old = document.querySelector('input[name="old"]:checked')?.value;
+const questions = [
+  // A1
+  { t:"I usually start things because I decide to, not because circumstances push me.", a:"A", v:[2,1,-1,-2]},
+  { t:"If external demands disappeared, I would feel unsure how to act.", a:"A", v:[-2,-1,1,2]},
+  { t:"I am usually aware of why I am doing what I am doing.", a:"A", v:[2,1,-1,-2]},
+  { t:"When something feels wrong, I tend to endure it rather than initiate change.", a:"A", v:[-2,-1,1,2]},
 
-  if (!happy || !old) {
-    document.getElementById("result").textContent =
-      "Please answer both questions.";
-    return;
-  }
+  // A2
+  { t:"When something goes wrong, I first look at my own role in it.", a:"A", v:[2,1,-1,-2]},
+  { t:"Most outcomes in my life are determined by forces beyond my influence.", a:"A", v:[-2,-1,1,2]},
+  { t:"I feel responsible for my choices, but not for what was never under my control.", a:"A", v:[2,1,-1,-2]},
+  { t:"If something fails, I often feel personally at fault even when others were involved.", a:"A", v:[2,1,-1,-2]},
 
-  let text = "";
+  // A3
+  { t:"I feel the urge to take control when others struggle.", a:"A", v:[2,1,-1,-2]},
+  { t:"I ignore my own needs to avoid being a burden.", a:"A", v:[-2,-1,1,2]},
+  { t:"I can support others without taking responsibility for their choices.", a:"A", v:[2,1,-1,-2]},
+  { t:"When situations become emotionally complex, I disengage entirely.", a:"A", v:[-2,-1,1,2]},
 
-  if (happy === "yes" && old === "yes") text = "You are a happy old person.";
-  if (happy === "yes" && old === "no") text = "You are a happy young person.";
-  if (happy === "no" && old === "yes") text = "You are an unhappy old person.";
-  if (happy === "no" && old === "no") text = "You are an unhappy young person.";
+  // B1
+  { t:"I pay attention to my body’s needs even when focused on ideas.", a:"B", v:[-2,-1,1,2]},
+  { t:"If something can’t be measured, I dismiss it as irrelevant.", a:"B", v:[-2,-1,1,2]},
+  { t:"I neglect responsibilities because I’m absorbed in thoughts.", a:"B", v:[2,1,-1,-2]},
+  { t:"Ideas matter to me only when they can be lived.", a:"B", v:[-2,-1,1,2]},
 
-  document.getElementById("result").textContent = text;
+  // B2
+  { t:"I look for meaning beyond practical outcomes.", a:"B", v:[2,1,-1,-2]},
+  { t:"Life can be fully explained without meaning or values.", a:"B", v:[-2,-1,1,2]},
+  { t:"I feel uneasy if my actions lack meaning.", a:"B", v:[2,1,-1,-2]},
+  { t:"I prioritize efficiency over meaning.", a:"B", v:[-2,-1,1,2]},
 
-  // --- PLANE LOGIC ---
+  // B3
+  { t:"I tend to question beliefs when evidence conflicts.", a:"B", v:[-2,-1,1,2]},
+  { t:"I stick with explanations that feel right despite facts.", a:"B", v:[2,1,-1,-2]},
+  { t:"I change convictions when reality contradicts them.", a:"B", v:[-2,-1,1,2]},
+  { t:"Once an idea makes sense of my life, I stop checking it.", a:"B", v:[2,1,-1,-2]}
+];
+
+const answers = ["Yes","More yes than no","More no than yes","No"];
+
+const form = document.getElementById("testForm");
+
+questions.forEach((q,i)=>{
+  const div = document.createElement("div");
+  div.className = "question";
+  div.innerHTML = `<p>${i+1}. ${q.t}</p>` +
+    answers.map((a,j)=>`
+      <label>
+        <input type="radio" name="q${i}" value="${j}">
+        ${a}
+      </label><br>`).join("");
+  form.appendChild(div);
+});
+
+function calculate(){
+  let A=0, B=0;
+
+  questions.forEach((q,i)=>{
+    const r = document.querySelector(`input[name="q${i}"]:checked`);
+    if(!r) return;
+    const val = q.v[Number(r.value)];
+    if(q.a==="A") A+=val;
+    else B+=val;
+  });
+
+  document.getElementById("score").innerText =
+    `Agency score: ${A} | Abstraction score: ${B}`;
+
   const dot = document.getElementById("dot");
-
-  // X axis
-  const x = happy === "yes" ? 225 : 75;
-
-  // Y axis
-  const y = old === "yes" ? 75 : 225;
-
-  dot.style.left = x + "px";
-  dot.style.top = y + "px";
+  const clamp = v => Math.max(-20, Math.min(20, v));
+  dot.style.left = (200 + clamp(B)*8) + "px";
+  dot.style.top  = (200 - clamp(A)*8) + "px";
   dot.style.display = "block";
 }
 </script>
