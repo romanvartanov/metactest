@@ -47,10 +47,16 @@ document.getElementById("score").innerText =
   // --- PLANE LOGIC (5x5, clamped) ---
   const dot = document.getElementById("dot");
 
-  const clamp = v => Math.max(-5, Math.min(5, v));
+ / max possible absolute score = number of questions
+const MAX = QUESTIONS.length;
 
-  const x = 200 + clamp(B) * 40;
-  const y = 200 - clamp(A) * 40;
+// normalize to range [-1, 1]
+const normA = A / MAX;
+const normB = B / MAX;
+
+// map to plane (400x400, center at 200)
+const x = 200 + normB * 200;
+const y = 200 - normA * 200;
 
   dot.style.left = x + "px";
   dot.style.top  = y + "px";
