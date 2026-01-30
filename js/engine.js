@@ -42,7 +42,7 @@ B += ans.abstraction;
   });
 
 document.getElementById("score").innerText =
-'Agency: ${A} | Abstraction: ${B}';
+`Agency: ${A} | Abstraction: ${B}`;
 
   // --- PLANE LOGIC (5x5, clamped) ---
   const dot = document.getElementById("dot");
