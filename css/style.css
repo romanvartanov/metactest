@@ -28,4 +28,24 @@ body {
   transform: translate(-50%, -50%);
   display: none;
 }
+
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+}
+
+.question {
+  margin-bottom: 30px;
+}
+
+body {
+  background: #f7f7f7;
+}
+
+.test-box {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+}
 </style>
