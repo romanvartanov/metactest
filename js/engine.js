@@ -14,11 +14,12 @@ const QUESTIONS = [q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11];
 
 const form = document.getElementById("testForm");
 
+/* ---------- RENDER QUESTIONS ---------- */
 QUESTIONS.forEach(q => {
   const div = document.createElement("div");
   div.className = "question";
   div.innerHTML = `
-    <p><strong>${q.id}</strong><br>${q.text}</p>
+    <p><strong>${q.id.toUpperCase()}</strong><br>${q.text}</p>
     ${q.answers.map((a,i)=>`
       <label>
         <input type="radio" name="${q.id}" value="${i}">
@@ -29,36 +30,41 @@ QUESTIONS.forEach(q => {
   form.appendChild(div);
 });
 
-window.calculate = function(){
-  let A = 0;
-  let B = 0;
+/* ---------- CALCULATE RESULT ---------- */
+window.calculate = function () {
+  let A = 0; // Agency
+  let B = 0; // Abstraction
 
   QUESTIONS.forEach(q => {
     const r = document.querySelector(`input[name="${q.id}"]:checked`);
-    if(!r) return;
+    if (!r) return;
     const ans = q.answers[Number(r.value)];
-A += ans.agency;
-B += ans.abstraction;
+    A += ans.agency;
+    B += ans.abstraction;
   });
 
-document.getElementById("score").innerText =
-`Agency: ${A} | Abstraction: ${B}`;
+  document.getElementById("score").innerText =
+    `Agency: ${A} | Abstraction: ${B}`;
 
-  // --- PLANE LOGIC (5x5, clamped) ---
+  /* ---------- PLANE MAPPING ---------- */
+
   const dot = document.getElementById("dot");
 
- / max possible absolute score = number of questions
-const MAX = QUESTIONS.length;
+  // each question contributes max |1|
+  const MAX = QUESTIONS.length;
 
-// normalize to range [-1, 1]
-const normA = A / MAX;
-const normB = B / MAX;
+  // normalize to [-1, 1]
+  const normA = A / MAX;
+  const normB = B / MAX;
 
-// map to plane (400x400, center at 200)
-const x = 200 + normB * 200;
-const y = 200 - normA * 200;
+  // plane size = 400x400, center = 200
+  const HALF = 200;
 
-  dot.style.left = x + "px";
-  dot.style.top  = y + "px";
+  // full sensitivity: every answer moves dot
+  const x = HALF + normB * HALF;
+  const y = HALF - normA * HALF;
+
+  dot.style.left = `${x}px`;
+  dot.style.top = `${y}px`;
   dot.style.display = "block";
 };
