@@ -36,9 +36,9 @@ window.calculate = function(){
   QUESTIONS.forEach(q => {
     const r = document.querySelector(`input[name="${q.id}"]:checked`);
     if(!r) return;
-    const score = q.answers[Number(r.value)].score;
-    A += score[0];
-    B += score[1];
+    const ans = q.answers[Number(r.value)];
+A += ans.agency;
+B += ans.abstraction;
   });
 
   document.getElementById("score").innerText =
