@@ -31,16 +31,30 @@ It's best to go with your first reaction.
  
 
 <div class="plane">
+
+  <!-- Axis lines -->
   <div class="axis horizontal"></div>
   <div class="axis vertical"></div>
+
+  <!-- Axis labels -->
+  <div class="axis-hint top-hint">Egocentric</div>
+  <div class="axis-hint bottom-hint">Depersonalized</div>
+  <div class="axis-hint left-hint">Material</div>
+  <div class="axis-hint right-hint">Ideal</div>
+
+  <!-- Center label -->
+  <div class="axis-hint" style="
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    opacity: 0.9;">
+    Metaxis
+  </div>
+
+  <!-- Result dot -->
   <div id="dot" class="dot"></div>
- <div class="label center">Metaxis</div>
 
-<div class="label top">Egocentric</div>
-<div class="label bottom">Depersonalized</div>
-
-<div class="label left">Material</div>
-<div class="label right">Ideal</div>
 </div>
 
 <script type="module" src="js/engine.js"></script>
