@@ -32,7 +32,7 @@ import invite from "../results/invite.js";
 
 /* ---------- QUESTIONS ARRAY ---------- */
 const QUESTIONS = [
-  q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11
+  q1, q2, q3, q4, q5, q6, q7, q8, q9, q10, q11
 ];
 
 /* ---------- RENDER QUESTIONS ---------- */
@@ -43,7 +43,7 @@ QUESTIONS.forEach(q => {
   div.className = "question";
   div.innerHTML = `
     <p><strong>${q.id.toUpperCase()}</strong><br>${q.text}</p>
-    ${q.answers.map((a,i)=>`
+    ${q.answers.map((a, i) => `
       <label>
         <input type="radio" name="${q.id}" value="${i}">
         ${a.text}
@@ -55,50 +55,64 @@ QUESTIONS.forEach(q => {
 
 /* ---------- CALCULATE RESULT ---------- */
 window.calculate = function () {
+
+  /* --- validation: all questions answered --- */
+  for (const q of QUESTIONS) {
+    const answered = document.querySelector(`input[name="${q.id}"]:checked`);
+    if (!answered) {
+      alert("Please answer all questions before seeing your result.");
+      return;
+    }
+  }
+
   let A = 0; // Agency
   let B = 0; // Abstraction
 
   QUESTIONS.forEach(q => {
     const r = document.querySelector(`input[name="${q.id}"]:checked`);
-    if (!r) return;
     const ans = q.answers[Number(r.value)];
     A += ans.agency;
     B += ans.abstraction;
   });
 
-  /* ---------- PLANE MAPPING (CONTINUOUS) ---------- */
+  /* ---------- DISPLAY NUMERIC SCORES ---------- */
+  document.getElementById("score").innerText =
+    `Agency: ${A} | Abstraction: ${B}`;
+
+  /* ---------- PLANE MAPPING (CONTINUOUS, SENSITIVE) ---------- */
   const dot = document.getElementById("dot");
 
-  const MAX = QUESTIONS.length; // normalization base
-  const normA = A / MAX;        // [-1 .. 1]
+  const MAX = QUESTIONS.length;      // normalization base
+  const normA = A / MAX;             // range approx [-1 .. 1]
   const normB = B / MAX;
 
-  const HALF = 200; // plane center (400x400)
+  const CENTER = 200;                // center of 400x400 plane
+  const SCALE = 180;                 // keeps dot inside plane
 
-  dot.style.left = `${HALF + normB * HALF}px`;
-  dot.style.top  = `${HALF - normA * HALF}px`;
+  dot.style.left = `${CENTER + normB * SCALE}px`;
+  dot.style.top  = `${CENTER - normA * SCALE}px`;
   dot.style.display = "block";
 
   /* ---------- RESULT CLASSIFICATION ---------- */
 
-  // Balance (distance)
-  const distance = Math.sqrt(A*A + B*B);
+  // Balance (distance from center, normalized)
+  const distance = Math.sqrt(normA * normA + normB * normB);
 
   let balanceResult;
-  if (distance <= 3) balanceResult = balanceMetaxis;
-  else if (distance <= 7) balanceResult = balanceMild;
+  if (distance <= 0.33) balanceResult = balanceMetaxis;
+  else if (distance <= 0.66) balanceResult = balanceMild;
   else balanceResult = balanceClear;
 
   // Abstraction axis
   let abstractionResult;
-  if (Math.abs(B) <= 1) abstractionResult = abstractionIntegral;
-  else if (B > 1) abstractionResult = abstractionIdealistic;
+  if (Math.abs(normB) <= 0.33) abstractionResult = abstractionIntegral;
+  else if (normB > 0.33) abstractionResult = abstractionIdealistic;
   else abstractionResult = abstractionMaterialistic;
 
   // Agency axis
   let agencyResult;
-  if (Math.abs(A) <= 1) agencyResult = agencyConscious;
-  else if (A > 1) agencyResult = agencyEgocentric;
+  if (Math.abs(normA) <= 0.33) agencyResult = agencyConscious;
+  else if (normA > 0.33) agencyResult = agencyEgocentric;
   else agencyResult = agencyDepersonalized;
 
   /* ---------- RENDER INTERPRETATION ---------- */
